@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <structs.h>
 #include <string.h>
-#define TAMLISTA 20
-#define MAX_livros 20
+
+#include <backend/headers/structs.h>
+#include <backend/headers/FunctionsNome.h>
+#include <backend/headers/FunctionsPreco.h>
 
 int main()
 {
@@ -30,112 +31,10 @@ int main()
         {37.90, "Percy Jackson e o Ladrao de Raios"}
     };
 
-    void ordenaPrecoMenor(livros lista[], int tamLista){
-    
-    for(int i = 0; i < tamLista; i++){
-        for(int j = 0; j < tamLista - i - 1; j++){
-            livros aux;
-            if(lista[j].preco > lista[j + 1].preco){
-                aux = lista[j];
-                lista[j] = lista[j + 1];
-                lista[j + 1] = aux;
-            }
-        }
-    }
-
-        for(int i = 0; i < tamLista; i++){
-            printf("\n========\n");
-            printf("\n%s\n", lista[i].nome);
-            printf("\n%.2f\n", lista[i].preco);
-            printf("\n========\n");
-        }
-    }
-
-    void ordenaPrecoMaior(livros lista[], int tamLista){
-    
-        for(int i = 0; i < tamLista; i++){
-            for(int j = 0; j < tamLista - i - 1; j++){
-                livros aux;
-                if(lista[j].preco < lista[j + 1].preco){
-                    aux = lista[j];
-                    lista[j] = lista[j + 1];
-                    lista[j + 1] = aux;
-                }
-            }
-        }
-
-        for(int i = 0; i < tamLista; i++){
-            printf("\n========\n");
-            printf("\n%s\n", lista[i].nome);
-            printf("\n%.2f\n", lista[i].preco);
-            printf("\n========\n");
-            }
-    }
-
-    void ordenaNomeCrescente(livros lista[], int qtdLivros){
-
-    
-    livros temp[50];
-
-    for(int i = 0; i < MAX_livros - 1; i++){
-
-        for(int j=i+1; j < MAX_livros - i ; j++){
-    
-            if(strcmp(lista[i].nome, lista[j].nome) > 0)
-            {
-                temp[i] = lista[j];
-                lista[j] = lista[i];
-                lista[i] = temp[i];
-            }
-    
-            
-        }
-
-    }
-
-    for(int i = 0; i < MAX_livros; i++){
-        printf("\n========\n");
-        printf("\n%s\n", lista[i].nome);
-        printf("\n%.2f\n", lista[i].preco);
-        printf("\n========\n");
-    }
-
-}
-
-void ordenaNomeDecrescente(livros lista[], int qtdLivros){
-
-    
-    livros temp[50];
-
-    for(int i = 0; i < MAX_livros - 1; i++){
-
-        for(int j=i+1; j < MAX_livros - i ; j++){
-    
-            if(strcmp(lista[i].nome, lista[j].nome) < 0)
-            {
-                temp[i] = lista[j];
-                lista[j] = lista[i];
-                lista[i] = temp[i];
-            }
-    
-            
-        }
-
-    }
-
-    for(int i = 0; i < MAX_livros; i++){
-        printf("\n========\n");
-        printf("\n%s\n", lista[i].nome);
-        printf("\n%.2f\n", lista[i].preco);
-        printf("\n========\n");
-    }
-
-}
-
-    printf("\nORDENA DECRESCENTE\n");
-    ordenaPrecoMenor(lista, TAMLISTA);
     printf("\nORDENA CRESCENTE\n");
-    ordenaPrecoMaior(lista, TAMLISTA);
+    ordenaPrecoAscendente(lista, TAMLISTA);
+    printf("\nORDENA DECRESCENTE\n");
+    ordenaPrecoDecrescente(lista, TAMLISTA);
     printf("Ordena nome crescente: ");
     ordenaNomeCrescente(lista, MAX_livros);
     printf("Ordena nome decrescente: ");

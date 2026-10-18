@@ -3,7 +3,7 @@
 Ordena um catalogo de livros por **nome** ou **preco**, em ordem **crescente** ou **decrescente**.
 
 - **Backend (C):** `backend/` - algoritmos de ordenacao
-- **Frontend (Python/Tkinter):** `frontend/app.py` - chama o programa em C e exibe o resultado
+- **Frontend (Web):** `frontend/` - servidor Node.js + pagina HTML que chamam o programa em C
 
 ## Como compilar o backend (a partir da raiz do projeto)
 
@@ -20,17 +20,30 @@ gcc -I. backend/src/main.c backend/src/Functions/*.c -o catalogo
 ./catalogo preco desc    # preco decrescente
 ```
 
-## Rodar a interface
+## Rodar a interface web
 
-Requer Python 3 (Tkinter ja vem junto no Windows/macOS; no Linux: `sudo apt install python3-tk`).
+Requer Node.js (nao precisa de `npm install`).
 
 ```bash
-python frontend/app.py
+node frontend/server.js
 ```
 
-Se o executavel `catalogo` ainda nao existir, a interface tenta compilar sozinha (precisa do `gcc`).
+Abra `http://localhost:3000` no navegador. No GitHub Codespaces, clique em
+**Open in Browser** na notificacao da porta 3000 (ou na aba **Ports**).
+
+Se o executavel `catalogo` ainda nao existir, o servidor tenta compilar sozinho (precisa do `gcc`).
+
+## Como funciona
+
+```
+Navegador (index.html) -> servidor Node (server.js) -> ./catalogo <criterio> <ordem> -> JSON -> tabela
+```
 
 ## Algoritmos
 
 - Preco: Bubble Sort (`FunctionsPreco.c`)
 - Nome: troca por comparacao com `strcmp` (`FunctionsNome.c`)
+
+## Equipe
+
+- (preencher com os nomes)

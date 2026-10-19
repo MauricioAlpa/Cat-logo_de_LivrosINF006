@@ -1,20 +1,49 @@
-# Catálogo de Livros (C + front end)
+# Catalogo de Livros - Ordenacao em C
 
-O programa em C guarda os livros e faz as 4 ordenações (preço e nome, crescente e decrescente).
-O front end é uma página HTML que só mostra o resultado.
+Ordena um catalogo de livros por **nome** ou **preco**, em ordem **crescente** ou **decrescente**.
 
-## Ver a página (sem instalar nada)
-Dê dois cliques em `frontend/index.html`. O `dados.js` já vem gerado.
+- **Backend (C):** `backend/` - algoritmos de ordenacao
+- **Frontend (Web):** `frontend/` - servidor Node.js + pagina HTML que chamam o programa em C
 
-## Rodar no terminal (como antes)
-```
-gcc -I. backend/src/main.c backend/src/Functions/*.c -o main
-./main
+## Como compilar o backend (a partir da raiz do projeto)
+
+```bash
+gcc -I. backend/src/main.c backend/src/Functions/*.c -o catalogo
 ```
 
-## Atualizar a página depois de mudar o C
+## Testar so o C no terminal
+
+```bash
+./catalogo nome asc      # nome crescente
+./catalogo nome desc     # nome decrescente
+./catalogo preco asc     # preco crescente
+./catalogo preco desc    # preco decrescente
 ```
-./main --web
+
+## Rodar a interface web
+
+Requer Node.js (nao precisa de `npm install`).
+
+```bash
+node frontend/server.js
 ```
-Isso recria `frontend/dados.js` com as listas ordenadas pelas funções em C.
-(No Windows: `main.exe --web`.)
+
+Abra `http://localhost:3000` no navegador. No GitHub Codespaces, clique em
+**Open in Browser** na notificacao da porta 3000 (ou na aba **Ports**).
+
+Se o executavel `catalogo` ainda nao existir, o servidor tenta compilar sozinho (precisa do `gcc`).
+
+## Como funciona
+
+```
+Navegador (index.html) -> servidor Node (server.js) -> ./catalogo <criterio> <ordem> -> JSON -> tabela
+```
+
+## Algoritmos
+
+- Preco: Bubble Sort (`FunctionsPreco.c`)
+- Nome: troca por comparacao com `strcmp` (`FunctionsNome.c`)
+
+## Equipe
+
+- (preencher com os nomes)

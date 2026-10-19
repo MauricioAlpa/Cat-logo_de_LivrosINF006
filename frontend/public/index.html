@@ -44,6 +44,10 @@
     .status { color: var(--suave); font-size: .9rem; margin: 0; }
     .status code { background: var(--linha); padding: 2px 6px; border-radius: 4px; }
     .erro { color: #d33; }
+    .busca { width: 100%; padding: 11px 14px; font-size: 1rem; border-radius: 8px;
+      border: 1px solid var(--borda); background: var(--bg); color: var(--texto); }
+    .busca:focus { outline: 2px solid var(--destaque); outline-offset: 1px; }
+    td.vazio { text-align: center; color: var(--suave); padding: 24px; }
   </style>
 </head>
 <body>
@@ -68,6 +72,10 @@
   </section>
 
   <section class="card">
+    <input id="busca" class="busca" type="search" placeholder="Pesquisar livro pelo nome..." autocomplete="off" aria-label="Pesquisar livro">
+  </section>
+
+  <section class="card">
     <table>
       <thead>
         <tr><th>#</th><th>Livro</th><th class="num">Preço (R$)</th></tr>
@@ -84,6 +92,51 @@
   const corpo = document.getElementById("corpo");
   const status = document.getElementById("status");
 
+  const busca = document.getElementById("busca");
+  let ultimo = null; // ultimo resultado devolvido pelo C
+
+  // Remove acentos e maiusculas para a pesquisa ("cortico" acha "Cortico")
+  function normalizar(t) {
+    return t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
+
+  // Desenha a tabela mantendo a ordem do C e aplicando o filtro da busca
+  function desenhar() {
+    if (!ultimo) return;
+    const termo = normalizar(busca.value.trim());
+    const livros = ultimo.livros.filter((l) => normalizar(l.nome).includes(termo));
+
+    corpo.textContent = "";
+    if (livros.length === 0) {
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 3;
+      td.className = "vazio";
+      td.textContent = "Nenhum livro encontrado.";
+      tr.appendChild(td);
+      corpo.appendChild(tr);
+    }
+    livros.forEach((livro, i) => {
+      const tr = document.createElement("tr");
+      const pos = document.createElement("td");
+      pos.className = "pos";
+      pos.textContent = i + 1;
+      const nome = document.createElement("td");
+      nome.textContent = livro.nome;
+      const preco = document.createElement("td");
+      preco.className = "num";
+      preco.textContent = livro.preco.toFixed(2);
+      tr.append(pos, nome, preco);
+      corpo.appendChild(tr);
+    });
+
+    status.className = "status";
+    status.textContent = "";
+    const code = document.createElement("code");
+    code.textContent = ultimo.comando;
+    status.append("Comando executado: ", code, " (" + livros.length + " de " + ultimo.livros.length + " livros)");
+  }
+
   function valor(nome) {
     return document.querySelector('input[name="' + nome + '"]:checked').value;
   }
@@ -97,25 +150,8 @@
       const dados = await resp.json();
       if (!resp.ok) throw new Error(dados.erro || "Erro desconhecido.");
 
-      corpo.textContent = "";
-      dados.livros.forEach((livro, i) => {
-        const tr = document.createElement("tr");
-        const pos = document.createElement("td");
-        pos.className = "pos";
-        pos.textContent = i + 1;
-        const nome = document.createElement("td");
-        nome.textContent = livro.nome;
-        const preco = document.createElement("td");
-        preco.className = "num";
-        preco.textContent = livro.preco.toFixed(2);
-        tr.append(pos, nome, preco);
-        corpo.appendChild(tr);
-      });
-
-      status.textContent = "";
-      const code = document.createElement("code");
-      code.textContent = dados.comando;
-      status.append("Comando executado: ", code, " (" + dados.livros.length + " livros)");
+      ultimo = dados;
+      desenhar();
     } catch (e) {
       status.className = "status erro";
       status.textContent = "Erro: " + e.message;
@@ -125,6 +161,7 @@
   }
 
   btn.addEventListener("click", ordenar);
+  busca.addEventListener("input", desenhar);
   ordenar();
 </script>
 </body>

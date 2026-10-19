@@ -10,6 +10,13 @@ void ordenaNomeCrescente(livros lista[], int qtdLivros){
             }
         }
     }
+
+    for(int i = 0; i < qtdLivros; i++){
+        printf("\n========\n");
+        printf("%s\n", lista[i].nome);
+        printf("%.2f\n", lista[i].preco);
+        printf("========\n");
+    }
 }
 
 void ordenaNomeDecrescente(livros lista[], int qtdLivros){
@@ -21,5 +28,12 @@ void ordenaNomeDecrescente(livros lista[], int qtdLivros){
                 lista[j] = temp;
             }
         }
+    }
+
+    for(int i = 0; i < qtdLivros; i++){
+        printf("\n========\n");
+        printf("%s\n", lista[i].nome);
+        printf("%.2f\n", lista[i].preco);
+        printf("========\n");
     }
 }

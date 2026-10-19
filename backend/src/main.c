@@ -6,16 +6,8 @@
 #include <backend/headers/FunctionsNome.h>
 #include <backend/headers/FunctionsPreco.h>
 
-/* Uso: catalogo <nome|preco> <asc|desc>
- * Saida: uma linha por livro, no formato  nome;preco
- */
-int main(int argc, char *argv[])
+int main()
 {
-    if (argc != 3) {
-        fprintf(stderr, "Uso: %s <nome|preco> <asc|desc>\n", argv[0]);
-        return 1;
-    }
-
     livros lista[TAMLISTA] = {
         {39.90, "Dom Casmurro"},
         {45.50, "O Cortico"},
@@ -39,24 +31,13 @@ int main(int argc, char *argv[])
         {37.90, "Percy Jackson e o Ladrao de Raios"}
     };
 
-    const char *criterio = argv[1];
-    const char *ordem    = argv[2];
+    printf("\nORDENA CRESCENTE\n");
+    ordenaPrecoAscendente(lista, TAMLISTA);
+    printf("\nORDENA DECRESCENTE\n");
+    ordenaPrecoDecrescente(lista, TAMLISTA);
+    printf("Ordena nome crescente: ");
+    ordenaNomeCrescente(lista, MAX_livros);
+    printf("Ordena nome decrescente: ");
+    ordenaNomeDecrescente(lista, MAX_livros);
 
-    if (strcmp(criterio, "nome") == 0 && strcmp(ordem, "asc") == 0) {
-        ordenaNomeCrescente(lista, MAX_livros);
-    } else if (strcmp(criterio, "nome") == 0 && strcmp(ordem, "desc") == 0) {
-        ordenaNomeDecrescente(lista, MAX_livros);
-    } else if (strcmp(criterio, "preco") == 0 && strcmp(ordem, "asc") == 0) {
-        ordenaPrecoAscendente(lista, TAMLISTA);
-    } else if (strcmp(criterio, "preco") == 0 && strcmp(ordem, "desc") == 0) {
-        ordenaPrecoDecrescente(lista, TAMLISTA);
-    } else {
-        fprintf(stderr, "Argumentos invalidos. Use: nome|preco  asc|desc\n");
-        return 1;
-    }
-
-    for (int i = 0; i < TAMLISTA; i++) {
-        printf("%s;%.2f\n", lista[i].nome, lista[i].preco);
-    }
-    return 0;
 }

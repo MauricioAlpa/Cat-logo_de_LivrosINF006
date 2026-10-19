@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catálogo de Livros</title>
+  <style>
+    :root {
+      --bg: #f5f6f8; --card: #ffffff; --texto: #1f2430; --suave: #6b7280;
+      --borda: #e1e4ea; --destaque: #2f5fd0; --destaque-texto: #ffffff; --linha: #f0f2f6;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14161b; --card: #1d2027; --texto: #e8eaf0; --suave: #9aa1b0;
+        --borda: #2d313b; --destaque: #6b93ef; --destaque-texto: #10131a; --linha: #232731;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 24px 16px; background: var(--bg); color: var(--texto);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    main { max-width: 720px; margin: 0 auto; }
+    h1 { font-size: 1.5rem; margin: 0 0 4px; }
+    .sub { color: var(--suave); margin: 0 0 20px; }
+    .card {
+      background: var(--card); border: 1px solid var(--borda);
+      border-radius: 12px; padding: 16px; margin-bottom: 16px;
+    }
+    .controles { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; }
+    fieldset { border: 1px solid var(--borda); border-radius: 8px; padding: 8px 14px 10px; margin: 0; }
+    legend { color: var(--suave); font-size: .8rem; padding: 0 6px; }
+    label { display: block; padding: 3px 0; cursor: pointer; }
+    button {
+      background: var(--destaque); color: var(--destaque-texto); border: 0;
+      border-radius: 8px; padding: 12px 28px; font-size: 1rem; font-weight: 600; cursor: pointer;
+    }
+    button:disabled { opacity: .6; cursor: wait; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid var(--linha); }
+    th { color: var(--suave); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    td.pos { color: var(--suave); width: 40px; }
+    .status { color: var(--suave); font-size: .9rem; margin: 0; }
+    .status code { background: var(--linha); padding: 2px 6px; border-radius: 4px; }
+    .erro { color: #d33; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Catálogo de Livros</h1>
+  <p class="sub">A ordenação é feita pelo programa em C. Esta página só envia o comando e mostra o resultado.</p>
+
+  <section class="card">
+    <div class="controles">
+      <fieldset>
+        <legend>Ordenar por</legend>
+        <label><input type="radio" name="criterio" value="nome" checked> Nome</label>
+        <label><input type="radio" name="criterio" value="preco"> Preço</label>
+      </fieldset>
+      <fieldset>
+        <legend>Ordem</legend>
+        <label><input type="radio" name="ordem" value="asc" checked> Crescente</label>
+        <label><input type="radio" name="ordem" value="desc"> Decrescente</label>
+      </fieldset>
+      <button id="btn" type="button">Ordenar</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Livro</th><th class="num">Preço (R$)</th></tr>
+      </thead>
+      <tbody id="corpo"></tbody>
+    </table>
+  </section>
+
+  <p class="status" id="status">Escolha o critério e a ordem e clique em Ordenar.</p>
+</main>
+
+<script>
+  const btn = document.getElementById("btn");
+  const corpo = document.getElementById("corpo");
+  const status = document.getElementById("status");
+
+  function valor(nome) {
+    return document.querySelector('input[name="' + nome + '"]:checked').value;
+  }
+
+  async function ordenar() {
+    btn.disabled = true;
+    status.className = "status";
+    status.textContent = "Executando o programa em C...";
+    try {
+      const resp = await fetch("/api/ordenar?criterio=" + valor("criterio") + "&ordem=" + valor("ordem"));
+      const dados = await resp.json();
+      if (!resp.ok) throw new Error(dados.erro || "Erro desconhecido.");
+
+      corpo.textContent = "";
+      dados.livros.forEach((livro, i) => {
+        const tr = document.createElement("tr");
+        const pos = document.createElement("td");
+        pos.className = "pos";
+        pos.textContent = i + 1;
+        const nome = document.createElement("td");
+        nome.textContent = livro.nome;
+        const preco = document.createElement("td");
+        preco.className = "num";
+        preco.textContent = livro.preco.toFixed(2);
+        tr.append(pos, nome, preco);
+        corpo.appendChild(tr);
+      });
+
+      status.textContent = "";
+      const code = document.createElement("code");
+      code.textContent = dados.comando;
+      status.append("Comando executado: ", code, " (" + dados.livros.length + " livros)");
+    } catch (e) {
+      status.className = "status erro";
+      status.textContent = "Erro: " + e.message;
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  btn.addEventListener("click", ordenar);
+  ordenar();
+</script>
+</body>
+</html>
